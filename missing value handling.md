@@ -1,0 +1,29 @@
+```
+# -----------------------------
+# 1. Separate columns
+# -----------------------------
+num_cols = df.select_dtypes(include=['int64','float64']).columns
+cat_cols = df.select_dtypes(include=['object','category']).columns
+
+# -----------------------------
+# 2. Handle categorical (simple way)
+# -----------------------------
+for col in cat_cols:
+    df[col].fillna(df[col].mode()[0], inplace=True)
+
+# -----------------------------
+# 3. Apply MICE on numeric data
+# -----------------------------
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
+
+imputer = IterativeImputer(random_state=42)
+
+df[num_cols] = imputer.fit_transform(df[num_cols])
+
+# -----------------------------
+# 4. Done ✅
+# -----------------------------
+print(df.isnull().sum())   # check missing
+print(df.head())
+```
